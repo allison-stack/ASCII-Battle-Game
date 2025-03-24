@@ -27,8 +27,8 @@ def receiverThread():
     while True:
         pass
 
-    # g_serverSocket.close()
-    # sys.exit(0)
+    g_serverSocket.close()
+    sys.exit(0)
 
 ###############################################################################
 # main: connect to server, spawn receiver thread, send commands in a loop
@@ -44,12 +44,17 @@ def main():
     port = int(sys.argv[2])
 
     # TODO: create socket & connect to server
-    # Example:
-    # g_serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # g_serverSocket.connect((serverIP, port))
-    # print(f"Connected to server {serverIP}:{port}")
+    g_serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    # Error checking server connection
+    try:    
+        g_serverSocket.connect((serverIP, port))
+    except Exception as e:
+        print(f"[ERROR] Unable to connect: {e}")
+    print(f"Connected to server {serverIP}:{port}")
 
     # Spawn receiver thread
+    # TODO: Implement threading for client 
     # t = threading.Thread(target=receiverThread, args=())
     # t.daemon = True
     # t.start()
@@ -67,7 +72,7 @@ def main():
             continue
 
         # TODO: send command to server
-        # g_serverSocket.sendall(cmd.encode('utf-8'))
+        g_serverSocket.sendall(cmd.encode('utf-8'))
 
         # If QUIT => break
         if cmd.upper().startswith("QUIT"):
