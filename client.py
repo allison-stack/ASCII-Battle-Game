@@ -20,15 +20,15 @@ BUFFER_SIZE = 1024
 g_serverSocket = None  # shared by main thread and receiver thread
 
 ###############################################################################
-# TODO: continuously receive updates (ASCII grid) from the server
+# TODO: continuously receive updates (ASCII grid) from the server (Involves the buffer i think)
 ###############################################################################
 def receiverThread():
     global g_serverSocket
     while True:
         pass
 
-    g_serverSocket.close()
-    sys.exit(0)
+    # g_serverSocket.close()
+    # sys.exit(0)
 
 ###############################################################################
 # main: connect to server, spawn receiver thread, send commands in a loop

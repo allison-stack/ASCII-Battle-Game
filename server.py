@@ -111,6 +111,10 @@ def buildStateString():
     buffer.append("STATE\n")
 
     # Copy the grid
+    grid = g_gameState['grid']
+    for i in grid:
+        buffer.append(i)
+    
     # ...
     # Optionally append player info
 
@@ -124,6 +128,8 @@ def broadcastState():
     stateStr = buildStateString().encode('utf-8')
     
     # TODO: send buffer to each active client
+
+
 
 ###############################################################################
 # TODO: Handle a client command: MOVE, ATTACK, QUIT, etc.
@@ -207,17 +213,17 @@ def main():
 
     # TODO: create server socket, bind, listen
     # Example:
-    # serverSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # serverSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # serverSock.bind(('', port))
-    # serverSock.listen(5)
+    serverSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serverSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    serverSock.bind(('', port))
+    serverSock.listen(5)
     
     print(f"Server listening on port {port}...")
 
     while True:
         # TODO: accept new connection
-        # clientSock, addr = serverSock.accept()
-        # print(f"Accepted new client from {addr}")
+        clientSock, addr = serverSock.accept()
+        print(f"Accepted new client from {addr}")
 
         # 1) Lock state
         # 2) Check if g_gameState['clientCount'] < MAX_CLIENTS
