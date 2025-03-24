@@ -55,9 +55,9 @@ def main():
 
     # Spawn receiver thread
     # TODO: Implement threading for client 
-    # t = threading.Thread(target=receiverThread, args=())
-    # t.daemon = True
-    # t.start()
+    t = threading.Thread(target=receiverThread, args=())
+    t.daemon = True
+    t.start()
 
     # Main loop: read commands, send to server
     while True:
