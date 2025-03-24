@@ -113,7 +113,8 @@ def buildStateString():
     # Copy the grid
     grid = g_gameState['grid']
     for i in grid:
-        buffer.append(i)
+        row_string = ''.join(i)
+        buffer.append(row_string)
     
     # ...
     # Optionally append player info
@@ -233,7 +234,7 @@ def main():
         # 4) spawn a thread => threading.Thread(target=clientHandler, args=(slot,))
         pass
 
-    # serverSock.close()
+    serverSock.close()
 
 if __name__ == "__main__":
     main()

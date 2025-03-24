@@ -25,10 +25,15 @@ g_serverSocket = None  # shared by main thread and receiver thread
 def receiverThread():
     global g_serverSocket
     while True:
-        pass
+        # Buffer from server to check if game is ending
+        data = g_serverSocket.recv(BUFFER_SIZE).decode()
+        
+        # TODO: implement end of game on server side
+        if "Game over" in data:
+            break
 
-    # g_serverSocket.close()
-    # sys.exit(0)
+    g_serverSocket.close()
+    sys.exit(0)
 
 ###############################################################################
 # main: connect to server, spawn receiver thread, send commands in a loop
@@ -62,7 +67,7 @@ def main():
     # Main loop: read commands, send to server
     while True:
         try:
-            cmd = input("Enter command (MOVE/ATTACK/QUIT): ")
+            cmd = input("Enter command (MOVE/ATTACK/QUIT): ")    
         except EOFError:
             # e.g., Ctrl+D
             print("Exiting client.")
@@ -70,7 +75,11 @@ def main():
 
         if not cmd:  # empty line
             continue
-
+        
+        if cmd.upper() not in ("MOVE", "ATTACK", "QUIT"):
+                print("Please enter valid command.")
+                continue   
+        
         # TODO: send command to server
         g_serverSocket.sendall(cmd.encode('utf-8'))
 
