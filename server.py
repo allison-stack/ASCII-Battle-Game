@@ -222,18 +222,33 @@ def main():
     print(f"Server listening on port {port}...")
 
     while True:
-        # TODO: accept new connection
-        clientSock, addr = serverSock.accept()
-        print(f"Accepted new client from {addr}")
+        try:
+            # TODO: accept new connection
+            clientSock, addr = serverSock.accept()
+            print(f"Accepted new client from {addr}")
 
-        # 1) Lock state
-        # 2) Check if g_gameState['clientCount'] < MAX_CLIENTS
-        #    otherwise, reject
-        #
-        # 3) find a free slot in g_clientSockets
-        # 4) spawn a thread => threading.Thread(target=clientHandler, args=(slot,))
-        pass
-
+            # 1) Lock state
+            with g_stateLock:
+                # 2) Check if g_gameState['clientCount'] < MAX_CLIENTS
+                #    otherwise, reject
+                if g_gameState['clientCount'] < MAX_CLIENTS:
+                    # 3) find a free slot in g_clientSockets
+                    slot = None
+                    for index in range (len(g_clientSockets)):
+                        if g_clientSockets[index] == [None]:
+                            slot = index
+                            break
+                    if slot != None:
+                        g_clientSockets[slot] = clientSock
+                        # 4) spawn a thread => threading.Thread(target=clientHandler, args=(slot,))
+                        thread = threading.Thread(target=clientHandler, args=(slot,))
+                        thread.start()
+                else:
+                    continue
+        except socket.timeout:
+            continue
+        except Exception as e:
+            print(f"[ERROR] Accepting a connection: {e}") 
     serverSock.close()
 
 if __name__ == "__main__":
