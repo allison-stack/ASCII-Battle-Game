@@ -183,10 +183,15 @@ def clientHandler(playerIndex):
         refreshPlayerPositions()
         broadcastState()
 
+    
     while True:
         try:
-            # TODO: receive from client socket
-            break
+            data = sock.recv(BUFFER_SIZE).decode().strip()
+            if not data:
+                break  # client disconnected
+
+            print(f"Player {chr(ord('A') + playerIndex)}: {data}")
+            handleCommand(playerIndex, data.upper())
         except:
             break  # On error, break out
 
