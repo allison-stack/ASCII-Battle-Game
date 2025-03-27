@@ -189,9 +189,11 @@ def handleCommand(playerIndex, cmd):
             y_lower = max(0, ny - 1)
             y_upper = min(GRID_COLS, ny + 1)
 
-            for key, value in players.items():
-                if key != playerIndex and x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
-                    value['hp'] -= 10
+            for i, value in enumerate(players):
+                if i != playerIndex and value['active'] and value['hp'] > 0:
+                      if x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
+                            value['hp'] -= 10
+
 
                 
         # ...
