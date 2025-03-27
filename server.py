@@ -175,11 +175,11 @@ def handleCommand(playerIndex, cmd):
                 if nx < GRID_ROWS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['x'] = nx
             elif "LEFT" in cmd:
-                ny -= - 1
+                ny -= 1
                 if 0 <= GRID_COLS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['y'] = ny
             elif "RIGHT" in cmd:
-                nx += 1
+                ny += 1
                 if ny < GRID_COLS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['y'] = ny
 
