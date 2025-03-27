@@ -83,9 +83,9 @@ def main():
         if not cmd:  # empty line
             continue
         
-        if cmd.upper() not in ("MOVE", "ATTACK", "QUIT"):
-                print("Please enter valid command.")
-                continue   
+        if cmd.upper() not in ("MOVE UP", "MOVE DOWN", "MOVE LEFT", "MOVE RIGHT", "ATTACK", "QUIT"):
+            print("Please enter valid command.")
+            continue   
         
         # TODO: send command to server
         g_serverSocket.sendall(cmd.encode('utf-8'))

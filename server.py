@@ -108,7 +108,7 @@ def refreshPlayerPositions():
 def buildStateString():
     # e.g., prefix with "STATE\n", then rows of the grid, then player info
     buffer = []
-    buffer.append("--- GAME STATE ---\n")
+    buffer.append("\n--- GAME STATE ---\n")
 
     # Copy the grid
     grid = g_gameState['grid']
@@ -255,7 +255,6 @@ def main():
                     continue
                 else:
                     # 3) find a free slot in g_clientSockets
-                    slot = None
                     for slot in range (MAX_CLIENTS):
                         if g_clientSockets[slot] == None:
                             g_clientSockets[slot] = clientSock
