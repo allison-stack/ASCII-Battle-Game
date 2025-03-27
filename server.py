@@ -249,20 +249,20 @@ def main():
             with g_stateLock:
                 # 2) Check if g_gameState['clientCount'] < MAX_CLIENTS
                 #    otherwise, reject
-                if g_gameState['clientCount'] < MAX_CLIENTS:
+                if g_gameState['clientCount'] >= MAX_CLIENTS:
+                    clientSock.sendall("Server is full.".encode('utf-8'))
+                    clientSock.close()
+                    continue
+                else:
                     # 3) find a free slot in g_clientSockets
                     slot = None
-                    for index in range (len(g_clientSockets)):
-                        if g_clientSockets[index] == [None]:
-                            slot = index
+                    for slot in range (MAX_CLIENTS):
+                        if g_clientSockets[slot] == None:
+                            g_clientSockets[slot] = clientSock
+                            # 4) spawn a thread => threading.Thread(target=clientHandler, args=(slot,))
+                            thread = threading.Thread(target=clientHandler, args=(slot,))
+                            thread.start()
                             break
-                    if slot != None:
-                        g_clientSockets[slot] = clientSock
-                        # 4) spawn a thread => threading.Thread(target=clientHandler, args=(slot,))
-                        thread = threading.Thread(target=clientHandler, args=(slot,))
-                        thread.start()
-                else:
-                    continue
         except socket.timeout:
             continue
         except Exception as e:
