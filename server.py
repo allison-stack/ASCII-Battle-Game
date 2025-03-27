@@ -214,6 +214,7 @@ def clientHandler(playerIndex, clientSock):
         g_gameState['players'][playerIndex]['y'] = 0
         g_gameState['players'][playerIndex]['hp'] = 100
         g_gameState['players'][playerIndex]['active'] = True
+        g_gameState['clientCount'] += 1 # Increment num of active clients
     refreshPlayerPositions()
     broadcastState()
 

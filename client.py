@@ -72,6 +72,7 @@ def main():
 
 
     # Main loop: read commands, send to server
+
     while True:
         try:
             cmd = input("Enter command (MOVE/ATTACK/QUIT): ")    
