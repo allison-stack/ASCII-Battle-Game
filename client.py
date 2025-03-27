@@ -21,7 +21,7 @@ BUFFER_SIZE = 1024
 g_serverSocket = None  # shared by main thread and receiver thread
 
 ###############################################################################
-# TODO: continuously receive updates (ASCII grid) from the server (Involves the buffer i think)
+# TODO: continuously receive updates (ASCII grid) from the server 
 ###############################################################################
 def receiverThread():
     global g_serverSocket
@@ -66,10 +66,10 @@ def main():
     print(f"Connected to server {serverIP}:{port}")
 
     # Spawn receiver thread
-    # TODO: Implement threading for client 
     t = threading.Thread(target=receiverThread)
     t.daemon = True
     t.start()
+
 
     # Main loop: read commands, send to server
     while True:

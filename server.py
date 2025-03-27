@@ -135,6 +135,7 @@ def broadcastState():
                 sock.sendall(stateStr)
             except:
                 continue
+    
 
 
 
@@ -183,7 +184,7 @@ def handleCommand(playerIndex, cmd):
 ###############################################################################
 # Thread function: handle communication with one client
 ###############################################################################
-def clientHandler(playerIndex):
+def clientHandler(playerIndex, clientSock):
     sock = g_clientSockets[playerIndex]
 
     # Initialize player
@@ -192,8 +193,8 @@ def clientHandler(playerIndex):
         g_gameState['players'][playerIndex]['y'] = 0
         g_gameState['players'][playerIndex]['hp'] = 100
         g_gameState['players'][playerIndex]['active'] = True
-        refreshPlayerPositions()
-        broadcastState()
+    refreshPlayerPositions()
+    broadcastState()
 
     
     while True:
@@ -259,7 +260,7 @@ def main():
                         if g_clientSockets[slot] == None:
                             g_clientSockets[slot] = clientSock
                             # 4) spawn a thread => threading.Thread(target=clientHandler, args=(slot,))
-                            thread = threading.Thread(target=clientHandler, args=(slot,))
+                            thread = threading.Thread(target=clientHandler, args=(slot, clientSock))
                             thread.start()
                             break
         except socket.timeout:
