@@ -108,13 +108,13 @@ def refreshPlayerPositions():
 def buildStateString():
     # e.g., prefix with "STATE\n", then rows of the grid, then player info
     buffer = []
-    buffer.append("STATE\n")
+    buffer.append("--- GAME STATE ---\n")
 
     # Copy the grid
     grid = g_gameState['grid']
     for i in grid:
         row_string = ''.join(i)
-        buffer.append(row_string)
+        buffer.append(row_string + '\n')
     
     # ...
     # Optionally append player info
@@ -129,6 +129,12 @@ def broadcastState():
     stateStr = buildStateString().encode('utf-8')
     
     # TODO: send buffer to each active client
+    for sock in g_clientSockets:
+        if sock is not None:
+            try:
+                sock.sendall(stateStr)
+            except:
+                continue
 
 
 
@@ -154,10 +160,16 @@ def handleCommand(playerIndex, cmd):
                 ny = players[playerIndex]['y']
                 if nx < GRID_ROWS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['x'] = nx
-            # elif "LEFT" in cmd:
-            # ...
-            #elif "RIGHT" in cmd:
-            # ...
+            elif "LEFT" in cmd:
+                nx = players[playerIndex]['x']
+                ny = players[playerIndex]['y'] - 1
+                if 0 <= GRID_COLS and g_gameState['grid'][nx][ny] != '#':
+                    players[playerIndex]['y'] = ny
+            elif "RIGHT" in cmd:
+                nx = players[playerIndex]['x']
+                ny = players[playerIndex]['y'] + 1
+                if ny < GRID_COLS and g_gameState['grid'][nx][ny] != '#':
+                    players[playerIndex]['y'] = ny
 
         # elif cmd.startswith("ATTACK"):
         # ...
@@ -186,12 +198,12 @@ def clientHandler(playerIndex):
     
     while True:
         try:
-            data = sock.recv(BUFFER_SIZE).decode().strip()
+            data = sock.recv(BUFFER_SIZE)
             if not data:
                 break  # client disconnected
-
+            
             print(f"Player {chr(ord('A') + playerIndex)}: {data}")
-            handleCommand(playerIndex, data.upper())
+            handleCommand(playerIndex, data.decode('utf-8').strip())
         except:
             break  # On error, break out
 
@@ -202,6 +214,7 @@ def clientHandler(playerIndex):
     with g_stateLock:
         g_clientSockets[playerIndex] = None
         g_gameState['players'][playerIndex]['active'] = False
+        g_gameState['clientCount'] -= 1
         refreshPlayerPositions()
         broadcastState()
 
