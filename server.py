@@ -161,31 +161,39 @@ def broadcastState():
 def handleCommand(playerIndex, cmd):
     with g_stateLock:
         players = g_gameState['players']
+        nx = players[playerIndex]['x']
+        ny = players[playerIndex]['y']
 
         # Example: parse "MOVE UP", "MOVE DOWN", etc.
         if cmd.startswith("MOVE"):
             if "UP" in cmd:
-                nx = players[playerIndex]['x'] - 1
-                ny = players[playerIndex]['y']
+                nx -= 1
                 if 0 <= nx < GRID_ROWS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['x'] = nx
             elif "DOWN" in cmd:
-                nx = players[playerIndex]['x'] + 1
-                ny = players[playerIndex]['y']
+                nx += 1
                 if nx < GRID_ROWS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['x'] = nx
             elif "LEFT" in cmd:
-                nx = players[playerIndex]['x']
-                ny = players[playerIndex]['y'] - 1
+                ny -= - 1
                 if 0 <= GRID_COLS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['y'] = ny
             elif "RIGHT" in cmd:
-                nx = players[playerIndex]['x']
-                ny = players[playerIndex]['y'] + 1
+                nx += 1
                 if ny < GRID_COLS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['y'] = ny
 
-        # elif cmd.startswith("ATTACK"):
+        elif cmd.startswith("ATTACK"):
+            x_lower = max(0, nx - 1)
+            x_upper = min(GRID_ROWS, nx + 1)
+            y_lower = max(0, ny - 1)
+            y_upper = min(GRID_COLS, ny + 1)
+
+            for key, value in players.items():
+                if key != playerIndex and x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
+                    value['hp'] -= 10
+
+                
         # ...
         # elif cmd.startswith("QUIT"):
         # ...
