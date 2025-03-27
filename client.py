@@ -15,6 +15,7 @@ Usage:
 import sys
 import socket
 import threading
+import select
 
 BUFFER_SIZE = 1024
 g_serverSocket = None  # shared by main thread and receiver thread
@@ -22,18 +23,20 @@ g_serverSocket = None  # shared by main thread and receiver thread
 ###############################################################################
 # TODO: continuously receive updates (ASCII grid) from the server (Involves the buffer i think)
 ###############################################################################
-def receiverThread():
+def receiverThread(kill: threading.Event):
     global g_serverSocket
-    while True:
+    while not kill.is_set():
         # Buffer from server to check if game is ending
-        data = g_serverSocket.recv(BUFFER_SIZE).decode()
-        
-        # TODO: implement end of game on server side
-        if "Game over" in data:
-            break
+        tr,_,_ = select.select([g_serverSocket], [], [], 0)
+        if tr:
+            data = g_serverSocket.recv(BUFFER_SIZE).decode()
 
-    g_serverSocket.close()
-    sys.exit(0)
+            # TODO: implement end of game on server side
+            if "Game over" in data:
+                break
+
+    # g_serverSocket.close()
+    # sys.exit(0)
 
 ###############################################################################
 # main: connect to server, spawn receiver thread, send commands in a loop
@@ -60,8 +63,8 @@ def main():
 
     # Spawn receiver thread
     # TODO: Implement threading for client 
-    t = threading.Thread(target=receiverThread, args=())
-    t.daemon = True
+    kill = threading.Event()
+    t = threading.Thread(target=receiverThread, args=(kill,), daemon=True)
     t.start()
 
     # Main loop: read commands, send to server
@@ -81,13 +84,15 @@ def main():
                 continue   
         
         # TODO: send command to server
-        g_serverSocket.sendall(cmd.encode('utf-8'))
+        g_serverSocket.sendall(cmd.encode('utf-8').ljust(BUFFER_SIZE, b' '))
 
         # If QUIT => break
         if cmd.upper().startswith("QUIT"):
             break
 
     # cleanup
+    kill.set()
+    t.join()
     if g_serverSocket:
         g_serverSocket.close()
     sys.exit(0)
