@@ -193,6 +193,19 @@ def handleCommand(playerIndex, cmd):
                 if i != playerIndex and value['active'] and value['hp'] > 0:
                       if x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
                             value['hp'] -= 10
+        
+        elif cmd.startswith("FIREBALL"):
+            x_lower = max(0, nx - 2)
+            x_upper = min(GRID_ROWS - 1, nx + 2)
+            y_lower = max(0, ny - 2)
+            y_upper = min(GRID_COLS - 1, ny + 2)
+
+            for i, value in enumerate(players):
+                if i != playerIndex and value['active'] and value['hp'] > 0:
+                    if x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
+                        value['hp'] -= 20
+
+                                
 
 
                 
