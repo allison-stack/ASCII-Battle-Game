@@ -119,6 +119,19 @@ def buildStateString():
     # ...
     # Optionally append player info
 
+    buffer.append('\n')
+    buffer.append('Players:\n')
+    players = g_gameState['players']
+
+    for i, player in enumerate(players):
+        if player['active'] and player['hp'] > 0:
+            current = chr(ord('A') + i)
+            row_string = f"Player {current}: HP={player['hp']} Pos=({player['x']}, {player['y']})"
+            buffer.append(row_string + '\n')
+            
+
+    
+
     return ''.join(buffer)
 
 
