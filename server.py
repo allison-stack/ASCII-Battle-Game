@@ -45,6 +45,7 @@ g_gameState = {}
 g_clientSockets = [None] * MAX_CLIENTS  # track client connections
 g_stateLock = threading.Lock()          # lock for the game state
 
+
 ###############################################################################
 # Initialize the game state
 ###############################################################################
@@ -68,7 +69,8 @@ def initGameState():
             'x': -1,
             'y': -1,
             'hp': 100,
-            'active': False
+            'active': False,
+            'msg': ""
         }
         players.append(p)
 
@@ -128,8 +130,17 @@ def buildStateString():
             current = chr(ord('A') + i)
             row_string = f"Player {current}: HP={player['hp']} Pos=({player['x']}, {player['y']})"
             buffer.append(row_string + '\n')
-            
 
+    
+
+    for j, player in enumerate(players):
+        if player['msg'] != "" and player['active']:
+            buffer.append('\n')
+            buffer.append('New Message:\n')
+            current = chr(ord('A') + j)
+            row_string = f"Player {current} says: {player['msg']}"
+            buffer.append(row_string + '\n')
+            player['msg'] = ""
     
 
     return ''.join(buffer)
@@ -205,9 +216,9 @@ def handleCommand(playerIndex, cmd):
                     if x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
                         value['hp'] -= 20
 
-                                
-
-
+        elif cmd.startswith("MSG "):
+            players[playerIndex]['msg'] = cmd[4:]
+            
                 
         # ...
         # elif cmd.startswith("QUIT"):

@@ -81,7 +81,7 @@ def main():
 
     while True:
         try:
-            cmd = input("Enter command (MOVE/ATTACK/FIREBALL/QUIT): ")    
+            cmd = input("Enter command (MOVE/ATTACK/FIREBALL/MSG (text)/QUIT): ")    
         except EOFError:
             # e.g., Ctrl+D
             print("Exiting client.")
@@ -90,7 +90,7 @@ def main():
         if not cmd:  # empty line
             continue
         
-        if cmd.upper() not in ("MOVE UP", "MOVE DOWN", "MOVE LEFT", "MOVE RIGHT", "ATTACK", "QUIT", "FIREBALL"):
+        if (cmd.upper() not in ("MOVE UP", "MOVE DOWN", "MOVE LEFT", "MOVE RIGHT", "ATTACK", "QUIT", "FIREBALL")) and cmd.startswith("MSG ") == False:
             print("Please enter valid command.")
             continue   
         
