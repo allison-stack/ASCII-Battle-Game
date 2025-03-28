@@ -65,11 +65,17 @@ def main():
         print(f"[ERROR] Unable to connect: {e}")
     print(f"Connected to server {serverIP}:{port}")
 
+    #check if server full
+    start_server = g_serverSocket.recv(BUFFER_SIZE).decode('utf-8')
+    print(start_server)
+    if "Server is full." in  start_server:
+        g_serverSocket.close()
+        sys.exit(0)
+
     # Spawn receiver thread
     t = threading.Thread(target=receiverThread)
     t.daemon = True
     t.start()
-
 
     # Main loop: read commands, send to server
 
