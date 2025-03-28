@@ -108,7 +108,7 @@ def refreshPlayerPositions():
 # which you can send to all clients.
 ###############################################################################
 def buildStateString():
-    # e.g., prefix with "STATE\n", then rows of the grid, then player info
+    # e.g., prefix with "\n--- GAME STATE ---\n", then rows of the grid, then player info
     buffer = []
     buffer.append("\n--- GAME STATE ---\n")
 
@@ -152,7 +152,7 @@ def buildStateString():
 def broadcastState():
     stateStr = buildStateString().encode('utf-8')
     
-    # TODO: send buffer to each active client
+    # send buffer to each active client
     for sock in g_clientSockets:
         if sock is not None:
             try:
@@ -175,7 +175,7 @@ def handleCommand(playerIndex, cmd):
         nx = players[playerIndex]['x']
         ny = players[playerIndex]['y']
 
-        # Example: parse "MOVE UP", "MOVE DOWN", etc.
+        # parse and handle "MOVE UP", "MOVE DOWN", "MOVE LEFT", "MOVE RIGHT" commands
         if cmd.startswith("MOVE"):
             if "UP" in cmd:
                 nx -= 1
@@ -193,7 +193,7 @@ def handleCommand(playerIndex, cmd):
                 ny += 1
                 if ny < GRID_COLS and g_gameState['grid'][nx][ny] != '#':
                     players[playerIndex]['y'] = ny
-
+        # parse and handle "ATTACK" command (subtract -10hp from other player)
         elif cmd.startswith("ATTACK"):
             x_lower = max(0, nx - 1)
             x_upper = min(GRID_ROWS, nx + 1)
@@ -204,7 +204,7 @@ def handleCommand(playerIndex, cmd):
                 if i != playerIndex and value['active'] and value['hp'] > 0:
                       if x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
                             value['hp'] -= 10
-        
+        # parse and handle "FIREBALL" command (subtract -20hp from other player)
         elif cmd.startswith("FIREBALL"):
             x_lower = max(0, nx - 2)
             x_upper = min(GRID_ROWS - 1, nx + 2)
@@ -215,7 +215,7 @@ def handleCommand(playerIndex, cmd):
                 if i != playerIndex and value['active'] and value['hp'] > 0:
                     if x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
                         value['hp'] -= 20
-
+        # parse and handle "MSG" command (message will appear in terminal)
         elif cmd.startswith("MSG "):
             players[playerIndex]['msg'] = cmd[4:]
             
