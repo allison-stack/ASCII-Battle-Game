@@ -215,7 +215,7 @@ def handleCommand(playerIndex, cmd):
                 if i != playerIndex and value['active'] and value['hp'] > 0:
                     if x_lower <= value['x'] <= x_upper and y_lower <= value['y'] <= y_upper:
                         value['hp'] -= 20
-        # parse and handle "MSG" command (message will appear in terminal)
+        # parse and handle "MSG" command (message broadcasted to all clients)
         elif cmd.startswith("MSG "):
             players[playerIndex]['msg'] = cmd[4:]
             
